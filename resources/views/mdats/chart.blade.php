@@ -8,7 +8,7 @@
     <div id="app">
         <h1>Chart</h1>
         <div style="text-align : right;">
-            <a class="btn btn-outline-primary" href="/mdats/"> リストに戻る </a>
+            <a class="btn btn-outline-primary" href="/mdats"> リストに戻る </a>
         </div>
         <hr />
         <canvas id="myChart" ></canvas>

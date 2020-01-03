@@ -13,9 +13,20 @@
             {{ link_to_route('mdats.create', 'Create' ,null, ['class' => 'btn btn-primary']) }}
         </div>
         <div class="col-sm-6" style="text-align:center;">
-            {{ link_to_route('mdats.chart', 'Chart' ,null, ['class' => 'btn btn-outline-primary']) }}
+            <a href ="/mdats/chart?ym={{$now_month}}" class="btn btn-outline-primary">Chart</a>
+            {{ link_to_route('mdats.csv_get', 'CSV出力' ,null, ['class' => 'btn btn-outline-primary']) }}
 
         </div>    
+    </div>
+    <hr />
+    <div class="csv_import_wrap">
+        <p>Import :</p>
+        <form action="/mdats/csv_import" method="post" enctype="multipart/form-data" id="csvUpload">
+        <input type="file" value="ファイルを選択" name="csv_file"
+         required="required" class="btn btn-outline-primary" />
+        {{ csrf_field() }}
+        <button type="submit" class="btn btn-outline-primary">CSVインポート</button>
+        </form>        
     </div>
     <hr />
     <div class="month_move_wrap" style="text-align: center; font-size : 1.2rem;">

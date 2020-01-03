@@ -29,6 +29,8 @@ Route::resource('todos', 'TodosController');
 //
 Route::resource('plans', 'PlansController');
 //
+Route::post('/mdats/csv_import', 'MdatsController@csv_import')->name('mdats.csv_import');
+Route::get('/mdats/csv_get', 'MdatsController@csv_get')->name('mdats.csv_get');
 Route::get('/mdats/chart', 'MdatsController@chart')->name('mdats.chart');
 Route::resource('mdats', 'MdatsController');
 //
