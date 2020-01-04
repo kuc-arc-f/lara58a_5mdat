@@ -200,6 +200,36 @@ class MdatsController extends Controller
     /**************************************
      *
      **************************************/
+    private function validator(array $items)
+    {
+        $i = 2;
+        $errors = [];
+        foreach ($items as $item ) {
+//debug_dump("H=" . $hnum . ", i= ". $i);
+            if(!empty($item[0])){
+                $date = $item[0];
+                $hnum = $item[1];
+                $lnum = $item[2];
+                if(empty($hnum)){
+                    $errors[] = $i . "行目のHight が空白です";
+                }
+                if(empty($lnum )){
+                    $errors[] = $i . "行目のLow が空白です";
+                }
+                if( !is_numeric($hnum)){
+                    $errors[] = $i . "行目のHight は数値を入力下さい";
+                }
+                if( !is_numeric($lnum)){
+                    $errors[] = $i . "行目のLow は数値を入力下さい";
+                }
+            }
+            $i = $i +1;
+        }
+        return $errors;
+    }
+    /**************************************
+     *
+     **************************************/
     public function csv_import(Request $request){
         $user_id = Auth::id();
         // CSVファイルをサーバーに保存
@@ -220,18 +250,23 @@ class MdatsController extends Controller
             }
             $column_names[] = $result;
         }
-        $registration_errors_list = [];
-        $update_errors_list       = [];
-        $i = 0;
+        $csv_items = [];
         while ($row = fgetcsv($fp)) {
-            // SJIS-win→UTF-8へエンコード
             mb_convert_variables('UTF-8', 'SJIS-win', $row);
-            $is_registration_row = false;
+            $csv_items[] = $row;
+        }
+        fclose($fp);
+//debug_dump( $csv_items );
+        $errors = $this->validator($csv_items );
+        if(count($errors) > 0 ){
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
+
+        foreach ($csv_items as $row) {
             $date  =$row[0];
             if(!empty($date)){
                 $mdat = Mdat::where('user_id', $user_id )
                 ->where('date', $date )->first();
-    //dd($mdat);
                 if(empty($mdat) ){
                     $mdat = new Mdat();
                     $data["date"] = $row[0];
@@ -250,51 +285,8 @@ class MdatsController extends Controller
                     $mdat->save();
                 }    
             }
-            
-            foreach ($column_names as $column_no => $column_name) {
-                // 新規登録か更新かのチェック
-                /*
-                if($is_registration_row === true){
-                    if ($column_name !== 'id') {
-                        $registration_csv_list[$i][$column_name] = $row[$column_no] === '' ? null : $row[$column_no];
-                    }
-                } else {
-                    $update_csv_list[$i][$column_name] = $row[$column_no] === '' ? null : $row[$column_no];
-                }
-                */
-                // 既存更新処理
-                /*
-                if (isset($update_csv_list) === true) {
-                    foreach ($update_csv_list as $update_csv) {
-                        if ($this->fill($update_csv)->save() === false) {
-                            return redirect('/form')
-                                ->with('message', '既存データの更新に失敗しました。（新規登録処理は行われずに終了しました）');
-                        }
-                    }
-                }
-                */
-            }
-            /*
-            $validator = \Validator::make(
-                $is_registration_row === true ? $registration_csv_list[$i] : $update_csv_list[$i],
-                $this->defineValidationRules(),
-                $this->defineValidationMessages()
-            );
-
-            if ($validator->fails() === true) {
-                if ($is_registration_row === true) {
-                    $registration_errors_list[$i + 2] = $validator->errors()->all();
-                } else {
-                    $update_errors_list[$i + 2] = $validator->errors()->all();
-                }
-            }
-            */
-            $i++;
         }
-        fclose($fp);
         return redirect()->route('mdats.index');
-exit();
-
     }
 
 

@@ -8,25 +8,43 @@
         <h1>mDat 一覧 </h1>
     </div>
     <hr />
+    <!-- error_msg -->
+    @if (count($errors) > 0)
+        <div class="alert alert-danger">
+        <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+        </ul>
+        </div>
+    @endif    
     <div class="row" >
         <div class="col-sm-6">
             {{ link_to_route('mdats.create', 'Create' ,null, ['class' => 'btn btn-primary']) }}
         </div>
         <div class="col-sm-6" style="text-align:center;">
             <a href ="/mdats/chart?ym={{$now_month}}" class="btn btn-outline-primary">Chart</a>
-            {{ link_to_route('mdats.csv_get', 'CSV出力' ,null, ['class' => 'btn btn-outline-primary']) }}
-
         </div>    
     </div>
     <hr />
-    <div class="csv_import_wrap">
+    <div class="row csv_import_wrap">
+        <!--
         <p>Import :</p>
-        <form action="/mdats/csv_import" method="post" enctype="multipart/form-data" id="csvUpload">
-        <input type="file" value="ファイルを選択" name="csv_file"
-         required="required" class="btn btn-outline-primary" />
-        {{ csrf_field() }}
-        <button type="submit" class="btn btn-outline-primary">CSVインポート</button>
-        </form>        
+        -->
+        <div class="col-sm-8">
+            <form action="/mdats/csv_import" method="post" enctype="multipart/form-data" id="csvUpload">
+                {{ csrf_field() }}
+                <input type="file" value="ファイルを選択" name="csv_file"
+                required="required" class="btn btn-outline-primary" />
+                <button type="submit" class="btn btn-outline-primary">CSVインポート
+                </button>
+            </form>        
+        </div>
+        <div class="col-sm-4">
+            <a href ="/mdats/csv_get?ym={{$now_month}}"
+             class="btn btn-outline-primary"> CSV出力 
+            </a>
+        </div>        
     </div>
     <hr />
     <div class="month_move_wrap" style="text-align: center; font-size : 1.2rem;">
