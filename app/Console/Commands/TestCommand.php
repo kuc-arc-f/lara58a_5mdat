@@ -31,8 +31,8 @@ class TestCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->test_add_tasks();
-var_dump("#test-complete");
+//        $this->test_add_tasks();
+//var_dump("#test-complete");
     }
 
     /**************************************
